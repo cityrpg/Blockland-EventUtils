@@ -46,15 +46,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
   %i = 0;
   while (%i < %obj.numEvents)
   {
-    if (%obj.eventInput[%i] !$= %EventName)
-    {
-      
-    }
-    else if (!%obj.eventEnabled[%i])
-    {
-      
-    }
-    else 
+    if(%obj.eventInput[%i] $= %EventName && %obj.eventEnabled[%i])
     {
       %foundOne = 1;
       break;
@@ -96,23 +88,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
   %i = 0;
   while (%i < %obj.numEvents)
   {
-    if (!%obj.eventEnabled[%i])
-    {
-      
-    }
-    else if (%obj.eventInput[%i] !$= %EventName)
-    {
-      
-    }
-    else if (%obj.eventOutput[%i] !$= "CancelEvents")
-    {
-      
-    }
-    else if (%obj.eventDelay[%i] > 0)
-    {
-      
-    }
-    else if (%obj.eventTarget[%i] == -1)
+    else if (%obj.eventTarget[%i] == -1 && %obj.eventDelay[%i] <= 0 && %obj.eventOutput[%i] $= "CancelEvents" && %obj.eventInput[%i] $= %EventName && %obj.eventEnabled[%i])
     {
       %name = %obj.eventNT[%i];
       %group = %obj.getGroup ();
@@ -120,11 +96,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
       while (%j < %group.NTObjectCount[%name])
       {
         %target = %group.NTObject[%name, %j];
-        if (!isObject (%target))
-        {
-          
-        }
-        else 
+        if(isObject (%target)) 
         {
           %target.cancelEvents ();
         }
@@ -133,12 +105,8 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
     }
     else 
     {
-      %target = $InputTarget_[%obj.eventTarget[%i]];
-      if (!isObject (%target))
-      {
-        
-      }
-      else 
+      %target = $InputTarget_[%obj.eventTarget[%i]]
+      if(isObject (%target))
       {
         %target.cancelEvents ();
       }
@@ -149,19 +117,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
   %i = 0;
   while (%i < %obj.numEvents)
   {
-    if (%obj.eventInput[%i] !$= %EventName)
-    {
-      
-    }
-    else if (!%obj.eventEnabled[%i])
-    {
-      
-    }
-    else if (%obj.eventOutput[%i] $= "CancelEvents" && %obj.eventDelay[%i] == 0)
-    {
-      
-    }
-    else if (%obj.eventTarget[%i] == -1)
+    if (%obj.eventTarget[%i] == -1 && %obj.eventOutput[%i] !$= "CancelEvents" && %obj.eventDelay[%i] != 0 && %obj.eventEnabled[%i] && %obj.eventInput[%i] $= %EventName)
     {
       %name = %obj.eventNT[%i];
       %group = %obj.getGroup ();
@@ -169,11 +125,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
       while (%j < %group.NTObjectCount[%name])
       {
         %target = %group.NTObject[%name, %j];
-        if (!isObject (%target))
-        {
-          
-        }
-        else 
+        if(isObject (%target)) 
         {
           %eventCount += 1;
         }
@@ -223,19 +175,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
   %i = 0;
   while (%i < %obj.numEvents)
   {
-    if (%obj.eventInput[%i] !$= %EventName)
-    {
-      
-    }
-    else if (!%obj.eventEnabled[%i])
-    {
-      
-    }
-    else if (%obj.eventOutput[%i] $= "CancelEvents" && %obj.eventDelay[%i] == 0)
-    {
-      
-    }
-    else 
+    if(%obj.eventOutput[%i] !$= "CancelEvents" && %obj.eventDelay[%i] != 0 && %obj.eventEnabled[%i] &&%obj.eventInput[%i] !$= %EventName) 
     {
       %delay = %obj.eventDelay[%i];
       %outputEvent = %obj.eventOutput[%i];
@@ -252,11 +192,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
         while (%j < %group.NTObjectCount[%name])
         {
           %target = %group.NTObject[%name, %j];
-          if (!isObject (%target))
-          {
-            
-          }
-          else 
+          if (isObject (%target))
           {
             %targetClass = "fxDTSBrick";
             %numParameters = outputEvent_GetNumParametersFromIdx (%targetClass, %outputEventIdx);
@@ -326,11 +262,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
       else 
       {
         %target = $InputTarget_[%obj.eventTarget[%i]];
-        if (!isObject (%target))
-        {
-          
-        }
-        else 
+        if(isObject (%target)) 
         {
           %targetClass = inputEvent_GetTargetClass ("fxDTSBrick", %obj.eventInputIdx[%i], %obj.eventTargetIdx[%i]);
           %numParameters = outputEvent_GetNumParametersFromIdx (%targetClass, %outputEventIdx);
