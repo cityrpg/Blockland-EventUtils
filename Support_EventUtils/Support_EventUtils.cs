@@ -17,6 +17,21 @@ $Library::LastEvent::Loaded = true;
 deactivatePackage("Support_LastEvent");
 package Support_LastEvent
 {
+  // SimObject::onInputEventProcess
+  // Called immediately before the input event takes effect.
+  // These parameters will often match, i.e. in client events, the target object is always the same as the triggering client.
+  // this: The object that the event is targeting.
+  // obj: The object the event has been called from.
+  // client: The client object that fired the event, if any.
+  // %outputEvent: The function being called.
+  function SimObject::onInputEventProcess(%this, %obj, %client, %outputEvent)
+  {
+    if(isObject(%client))
+    {
+      %client.lastEventObject = %obj;
+    }
+  }
+
   // Source: https://github.com/Electrk/bl-decompiled/blob/master/server/scripts/allGameScripts.cs#L128
   
   // SimObject::processInputEvent
@@ -385,21 +400,6 @@ package Support_LastEvent
         }
       }
       %i += 1;
-    }
-  }
-
-  // SimObject::onInputEventProcess
-  // Called immediately before the input event takes effect.
-  // These parameters will often match, i.e. in client events, the target object is always the same as the triggering client.
-  // this: The object that the event is targeting.
-  // obj: The object the event has been called from.
-  // client: The client object that fired the event, if any.
-  // %outputEvent: The function being called.
-  function SimObject::onInputEventProcess(%this, %obj, %client, %outputEvent)
-  {
-    if(isObject(%client))
-    {
-      %client.lastEventObject = %obj;
     }
   }
 };
