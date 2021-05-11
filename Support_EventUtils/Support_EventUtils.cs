@@ -38,7 +38,7 @@ package Support_LastEvent
   // Oh boy! I can forsee absolutely nothing at all that could possibly go wrong here.
   // We're entirely overwriting the function as defined in the base game.
   // This will break anything and everything that packages this function *before* EventUtils executes, hence why preloading is required.
-  // Modified lines are tagged with an event starting with "eventUtils"
+  // Modified lines are tagged a comment starting with "eventUtils"
   function SimObject::processInputEvent (%obj, %EventName, %client)
   {
     if (%obj.numEvents <= 0)
