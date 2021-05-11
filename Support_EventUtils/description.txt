@@ -1,0 +1,3 @@
+Title: EventUtils
+Author: Lake (14128)
+Utilities for add-ons to integrate with events more easily.
