@@ -88,7 +88,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
   %i = 0;
   while (%i < %obj.numEvents)
   {
-    if (%obj.eventTarget[%i] == -1 && %obj.eventDelay[%i] <= 0 && %obj.eventOutput[%i] $= "CancelEvents" && %obj.eventInput[%i] $= %EventName && %obj.eventEnabled[%i])
+    else if (%obj.eventTarget[%i] == -1 && %obj.eventDelay[%i] <= 0 && %obj.eventOutput[%i] $= "CancelEvents" && %obj.eventInput[%i] $= %EventName && %obj.eventEnabled[%i])
     {
       %name = %obj.eventNT[%i];
       %group = %obj.getGroup ();
@@ -105,7 +105,7 @@ function SimObject::processInputEvent (%obj, %EventName, %client)
     }
     else 
     {
-      %target = $InputTarget_[%obj.eventTarget[%i]];
+      %target = $InputTarget_[%obj.eventTarget[%i]]
       if(isObject (%target))
       {
         %target.cancelEvents ();
