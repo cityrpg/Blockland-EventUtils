@@ -17,19 +17,16 @@ $Library::LastEvent::Loaded = true;
 deactivatePackage("Support_LastEvent");
 package Support_LastEvent
 {
-  // SimObject::onInputEventProcess
-  // Called immediately before the input event takes effect.
-  // These parameters will often match, i.e. in client events, the target object is always the same as the triggering client.
-  // this: The object that the event is targeting.
-  // obj: The object the event has been called from.
-  // client: The client object that fired the event, if any.
-  // %outputEvent: The function being called.
-  function SimObject::onInputEventProcess(%this, %obj, %client, %outputEvent)
+  function SimObject::EventUtilsCallEvent(%obj, %outputEvent, %numParameters, %eventOutputAppendClient, %sourceObj, %fullPar1, %fullPar2, %fullPar3, %fullPar4, %fullPar5)
   {
-    if(isObject(%client))
+    // Client object is the last parameter passed.
+    %client = %fullPar[%numParameters+1];
+    if(%eventOutputAppendClient && isObject(%client))
     {
-      %client.lastEventObject = %obj;
+      %client.lastEventObject = %sourceObj;
     }
+
+    %obj.call(%outputEvent, %fullPar1, %fullPar2, %fullPar3, %fullPar4, %fullPar5);
   }
 
   // Source: https://github.com/Electrk/bl-decompiled/blob/master/server/scripts/allGameScripts.cs#L128
@@ -38,7 +35,6 @@ package Support_LastEvent
   // Oh boy! I can forsee absolutely nothing at all that could possibly go wrong here.
   // We're entirely overwriting the function as defined in the base game.
   // This will break anything and everything that packages this function *before* EventUtils executes, hence why preloading is required.
-  // Modified lines are tagged a comment starting with "eventUtils"
   function SimObject::processInputEvent (%obj, %EventName, %client)
   {
     if (%obj.numEvents <= 0)
@@ -264,30 +260,27 @@ package Support_LastEvent
               %targetClass = "fxDTSBrick";
               %numParameters = outputEvent_GetNumParametersFromIdx (%targetClass, %outputEventIdx);
 
-              // eventUtils: Schedule the onInputEventProcess call
-              %target.schedule(%delay, onInputEventProcess, %obj, %client, %outputEvent);
-
               if (%obj.eventOutputAppendClient[%i])
               {
                 if (%numParameters == 0)
                 {
-                  %scheduleID = %target.schedule (%delay, %outputEvent, %client);
+                  %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %client);
                 }
                 else if (%numParameters == 1)
                 {
-                  %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %client);
+                  %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %par1, %client);
                 }
                 else if (%numParameters == 2)
                 {
-                  %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %client);
+                  %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %par1, %par2, %client);
                 }
                 else if (%numParameters == 3)
                 {
-                  %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %par3, %client);
+                  %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %par1, %par2, %par3, %client);
                 }
                 else if (%numParameters == 4)
                 {
-                  %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %par3, %par4, %client);
+                  %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %par1, %par2, %par3, %par4, %client);
                 }
                 else 
                 {
@@ -296,23 +289,23 @@ package Support_LastEvent
               }
               else if (%numParameters == 0)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj);
               }
               else if (%numParameters == 1)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent, %par1);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj, %par1);
               }
               else if (%numParameters == 2)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj, %par1, %par2);
               }
               else if (%numParameters == 3)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %par3);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj, %par1, %par2, %par3);
               }
               else if (%numParameters == 4)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %par3, %par4);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj, %par1, %par2, %par3, %par4);
               }
               else 
               {
@@ -338,30 +331,27 @@ package Support_LastEvent
             %targetClass = inputEvent_GetTargetClass ("fxDTSBrick", %obj.eventInputIdx[%i], %obj.eventTargetIdx[%i]);
             %numParameters = outputEvent_GetNumParametersFromIdx (%targetClass, %outputEventIdx);
 
-            // eventUtils: Schedule the onInputEventProcess call
-            %target.schedule(%delay, onInputEventProcess, %obj, %client, %outputEvent);
-
             if (%obj.eventOutputAppendClient[%i])
             {
               if (%numParameters == 0)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent, %client);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %client);
               }
               else if (%numParameters == 1)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %client);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %par1, %client);
               }
               else if (%numParameters == 2)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %client);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %par1, %par2, %client);
               }
               else if (%numParameters == 3)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %par3, %client);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %par1, %par2, %par3, %client);
               }
               else if (%numParameters == 4)
               {
-                %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %par3, %par4, %client);
+                %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, true, %obj, %par1, %par2, %par3, %par4, %client);
               }
               else 
               {
@@ -370,23 +360,23 @@ package Support_LastEvent
             }
             else if (%numParameters == 0)
             {
-              %scheduleID = %target.schedule (%delay, %outputEvent);
+              %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj);
             }
             else if (%numParameters == 1)
             {
-              %scheduleID = %target.schedule (%delay, %outputEvent, %par1);
+              %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj, %par1);
             }
             else if (%numParameters == 2)
             {
-              %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2);
+              %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj, %par1, %par2);
             }
             else if (%numParameters == 3)
             {
-              %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %par3);
+              %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj, %par1, %par2, %par3);
             }
             else if (%numParameters == 4)
             {
-              %scheduleID = %target.schedule (%delay, %outputEvent, %par1, %par2, %par3, %par4);
+              %scheduleID = %target.schedule (%delay, EventUtilsCallEvent, %outputEvent, %numParameters, false, %obj, %par1, %par2, %par3, %par4);
             }
             else 
             {
